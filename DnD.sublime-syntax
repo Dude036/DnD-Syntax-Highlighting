@@ -1,0 +1,127 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+name: Dungeons and Dragons
+file_extensions:
+  - dnd
+scope: source.dnd
+contexts:
+  main:
+    # Strings begin and end with quotes, and use backslashes as an escape character
+    - match: '"'
+      scope: punctuation.definition.string.begin.dnd
+      push: double_quoted_string
+
+    # Key words for Stores and Locations.
+    - match: '(Note|Notes|Economy|Resources|Description|Pickup \d+|Locations|Location|People|Reward|Rewards|Items|Pricing|Weapons|Armor|Shields|Consumable|Food|Drink|Drinks|Potions|Potion|Encounter|Encounters)'
+      push: key_word
+
+    # Key words for Encounters
+    - match: '(AC|Flat|HP|Size|Speed|Init|Initiative|Quantity)'
+      push: key_word
+
+    # Money
+    - match: '\b([0-9]+[\s]+|[0-9]+)(pp|gp|sp|cp)\b'
+      scope: storage.type.dnd
+
+    # Hyper Links
+    - match: '\b(https|http):\/\/[\w\-\.\/\?\=\#]+\b'
+      scope: storage.type.dnd
+
+    # Stat Key words
+    - match: '\b(Strength|Dexterity|Intelligence|Wisdom|Constitution|Charisma)'
+      scope: variable.parameter.dnd
+
+    - match: '\b(STR|DEX|INT|WIS|CON|CHA)\b'
+      scope: variable.parameter.dnd
+
+    - match: '\b(Will|Reflex|Ref|Fort|Fortitude)[\s]?(save|Save|saves|Saves)?\b'
+      scope: variable.parameter.dnd
+
+    # Skill key Words
+    - match: '\b(Acrobatics|Appraise|Bluff|Climb|Craft|Diplomacy|Disable Device|Disguise|Escape Artist|Fly|Handle Animal|Heal|Intimidate|Knowledge \(arcana\)|Knowledge \(dungeoneering\)|Knowledge \(engineering\)|Knowledge \(geography\)|Knowledge \(history\)|Knowledge \(local\)|Knowledge \(nature\)|Knowledge \(nobility\)|Knowledge \(planes\)|Knowledge \(religion\)|Linguistics|Perception|Perform|Profession|Ride|Sense Motive|Sleight of Hand|Spellcraft|Stealth|Survival|Swim|Use Magic Device)[\s]?(check|Check|checks|Checks)?\b'
+      scope: storage.type.dnd
+
+    # Spells
+    - match: '\<'
+      push: spells
+
+    # Enemy Information
+    - match: '(!![\s]+[\w+]+|!![\w+]+)'
+      scope: invalid.depricated.dnd
+      push: enemy_function
+
+    # Item Information
+    - match: '(\^[\w+]+|\^[\s]+[\w+]+)'
+      scope: variable.parameter.dnd
+      push: item_function
+
+    # Numbers
+    - match: '\b(-|\+)?[0-9.]+([\s]+hp|[\s]+HP|hp|HP|x|X|[\s]+x|[\s]+X|xp|XP|[\s]+XP|[\s]+xp|ft|FT|[\s]+FT|[\s]+ft|[\s]+lbs|lbs)?\b'
+      scope: constant.numeric.dnd
+
+    # Special location characters
+    # General superclass  @[*]
+    # Generic subclass    ~[*]
+    # Vendor subclass     $[*]
+    - match: '\@|\~|\$|\*'
+      scope: punctuation.definition.comment.dnd
+      push: location_name
+
+    # Event !<event>
+    - match: '(!\w+|![\s]+\w+)'
+      scope: entity.name.class
+      push: event_occured
+
+    # Difficulty of tasks
+    - match: '(DC|dc)'
+      scope: variable.parameter.dnd
+      push: difficulty
+
+    - match: '[0-9]+(d|D)'
+      scope: variable.parameter.dnd
+      push: difficulty
+
+  # Defined Push Classes
+  double_quoted_string:
+    - meta_scope: string.quoted.double.dnd
+    - match: '\\.'
+      scope: constant.character.escape.dnd
+    - match: '"'
+      scope: punctuation.definition.string.end.dnd
+      pop: true
+
+  item_function:
+    - meta_scope: variable.parameter.dnd
+    - match: '(::)'
+      pop: true
+
+  enemy_function:
+    - meta_scope: invalid.depricated.
+    - match: '(::)'
+      pop: true
+
+  location_name:
+    - meta_scope: comment.line.dnd
+    - match: \@|\~|\$|\*
+      pop: true
+
+  difficulty:
+    - meta_scope: variable.parameter.dnd
+    - match: '[0-9]+'
+      pop: true
+
+  event_occured:
+    - meta_scope: entity.name.class
+    - match: '(::)'
+      pop: true
+
+  key_word:
+    - meta_scope: keyword.control.dnd
+    - match: '(:| |\)|\n)'
+      pop: true
+
+  spells:
+    - meta_scope: storage.type.dnd
+    - match: '\>'
+      pop: true
