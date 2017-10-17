@@ -30,11 +30,11 @@ contexts:
       push: double_quoted_string
 
     # Key words for Stores and Locations.
-    - match: '(Note|Notes|Economy|Resources|Description|Pickup \d+|Locations|Location|People|Reward|Rewards|Items|Pricing|Weapons|Armor|Shields|Consumable|Food|Drink|Drinks|Potions|Potion|Encounter|Encounters)'
+    - match: '(Note|Notes|Economy|Resources|Description|Pickup \d+|Locations|Location|People|Reward|Rewards|Pricing|Weapons|Armor|Shields|Consumable|Food|Drink|Drinks|Potions|Potion|Encounter|Encounters)'
       push: key_word
 
     # Key words for Encounters
-    - match: '(AC|Flat|HP|Size|Speed|Init|Initiative|Quantity)'
+    - match: '(AC|Flat|HP|Size|Speed|Init|Initiative|Quantity|Spell|Spells|Items|Item)'
       push: key_word
 
     # Money
@@ -56,8 +56,12 @@ contexts:
       scope: variable.parameter.dnd
 
     # Skill key Words
-    - match: '\b(Acrobatics|Appraise|Bluff|Climb|Craft|Diplomacy|Disable Device|Disguise|Escape Artist|Fly|Handle Animal|Heal|Intimidate|Knowledge \(arcana\)|Knowledge \(dungeoneering\)|Knowledge \(engineering\)|Knowledge \(geography\)|Knowledge \(history\)|Knowledge \(local\)|Knowledge \(nature\)|Knowledge \(nobility\)|Knowledge \(planes\)|Knowledge \(religion\)|Linguistics|Perception|Perform|Profession|Ride|Sense Motive|Sleight of Hand|Spellcraft|Stealth|Survival|Swim|Use Magic Device)[\s]?(check|Check|checks|Checks)?\b'
-      scope: storage.type.dnd
+    - match: '(Acrobatics|Appraise|Bluff|Climb|Craft|Diplomacy|Disable Device|Disguise|Escape Artist|Fly|Handle Animal|Heal|Intimidate|Linguistics|Perception|Perform|Profession|Ride|Sense Motive|Sleight of Hand|Spellcraft|Stealth|Survival|Swim|Use Magic Device)'
+      push: skill_check
+
+    # Skill key Words (spells)
+    - match: 'Knowledge[\s+\(]?'
+      push: knowledge_check
 
     # Spells
     - match: '\<'
@@ -141,4 +145,14 @@ contexts:
   spells:
     - meta_scope: storage.type.dnd
     - match: '\>'
+      pop: true
+
+  skill_check:
+    - meta_scope: storage.type.dnd
+    - match: '[\s]?(check|Check|checks|Checks)?\s+'
+      pop: true
+
+  knowledge_check:
+    - meta_scope: storage.type.dnd
+    - match: '(all|All|arcana|Arcana|dungeoneering|Dungeoneering|engineering|Engineering|geography|Geography|history|History|local|Local|nature|Nature|nobility|Nobility|planes|Planes|religion|Religion)[\s+\)]?'
       pop: true
